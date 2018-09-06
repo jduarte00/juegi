@@ -1,6 +1,8 @@
 //set game score
-let score = 0;
-let vidas = 3;
+let score1 = 0;
+let score2 = 0;
+let vidas1 = 3;
+let vidas2 = 3;
 let frames = 0;
 let seconds = 0;
 //set canvas
@@ -22,7 +24,8 @@ let images = {
 }
 
 // 
-let playerBullets = [];
+let playerBullets1 = [];
+let playerBullets2 = [];
 let enemies = [];
 
 
@@ -36,6 +39,8 @@ class Board{
         this.image = document.createElement('img');
         this.image.src = images.bg;
         this.image.height = 500;
+        this.music = new Audio();
+        this.music.src = ""
         this.image.onload = function(){
             this.draw();
         }
@@ -54,11 +59,15 @@ class Board{
         /* ctx.drawImage(this.image, this.width + this.x, this.y); */
         // display the number of points or fps
         ctx.fillStyle = "lightgreen";
-        ctx.fillText('Score: ' +score, 10, 20);
+        ctx.fillText('Score1: ' +score1, 10, 20);
+        ctx.fillStyle = "lightgreen";
+        ctx.fillText('Score2: ' +score2, 10, 40);
         ctx.fillStyle = "white";
-        ctx.fillText('Seconds: ' +seconds, 10, 40);
+        ctx.fillText('Seconds: ' +seconds, 10, 60);
         ctx.fillStyle = "red";
-        ctx.fillText('Lives: ' + vidas, 10, 60);
+        ctx.fillText('Lives1: ' + vidas1, 10, 80);
+        ctx.fillStyle = "red";
+        ctx.fillText('Lives2: ' + vidas2, 10, 100);
         frames++;
         seconds = parseInt(frames/60);
     }
@@ -125,7 +134,7 @@ let monito = {
     shoot(){
         var bulletPosition = this.midpoint();
         
-        playerBullets.push( new Bullet({
+        playerBullets1.push( new Bullet({
             speed: 5,
             x: bulletPosition.x,
             y: bulletPosition.y
@@ -139,6 +148,80 @@ let monito = {
         };
     }
 };
+
+let monito2 = {
+    width: 43,
+    height: 50,
+    x: 30,
+    y: 150,
+    selectedImage: image1,
+    haciaAbajo: false,
+    jump_y: this.y,
+    updater: 0,
+    limitupdater: 10,
+   
+    draw(){
+        this.updater ++;
+        if (this.updater >= this.limitupdater){
+            if (this.selectedImage === image1) {
+                this.selectedImage = image2
+            } else {this.selectedImage = image1}
+            this.updater = 0;
+        }
+        //this.y =  myBoard.height - monito.height -10
+        ctx.drawImage(this.selectedImage, this.x, this.y);
+    },
+
+    moveForward(){
+        if (this.x >= myBoard.width - this.width) {
+            this.x = myBoard.width -this.width
+        } 
+        this.x += 5;
+    },
+
+    moveBackward(){
+        if (this.x <= 0){
+            this.x = 0;
+        }
+        this.x -= 5;
+    },
+    
+    idle(){
+        
+    },
+
+    moveUp(){
+        if (this.y <= 0){
+            this.y = 0;
+        }
+        this.y -= 5;
+    },
+
+    moveDown(){
+        if (this.y >= myBoard.height - this.height -5){
+            this.y = myBoard.height-this.height -5;
+        }
+        this.y += 5;
+    },
+
+    shoot(){
+        var bulletPosition = this.midpoint();
+        
+        playerBullets2.push( new Bullet({
+            speed: 5,
+            x: bulletPosition.x,
+            y: bulletPosition.y
+        }));
+    },
+
+    midpoint(){
+        return {
+            x: this.x + this.width/2,
+            y: this.y +this.height/2
+        };
+    }
+};
+
 // proyectiles
 
 function Bullet(I){
@@ -247,17 +330,17 @@ function collides(a, b) {
 }
 
 function handleCollisions() {
-    playerBullets.forEach(function(bullet){
+    playerBullets1.forEach(function(bullet){
         enemies.forEach(function(enemigo){
             if (collides(bullet, enemigo)){
                 enemigo.exp();
                 bullet.active = false;
                 if(enemigo.id === "zombie"){
-                    score += 1;
+                    score1 += 1;
                 } else if (enemigo.id === "satan"){
-                    score += 50;
+                    score1 += 50;
                 } else if (enemigo.id === "cow") {
-                    score -= 100;
+                    score1 -= 100;
                 }
             }
         });
@@ -265,35 +348,96 @@ function handleCollisions() {
     enemies.forEach(function(enemies){
         if (collides(monito, enemies)){
             enemies.active = false;
-            vidas -= 1;
+            vidas1 -= 1;
+        }
+    })
+    playerBullets2.forEach(function(bullet){
+        enemies.forEach(function(enemigo){
+            if (collides(bullet, enemigo)){
+                enemigo.exp();
+                bullet.active = false;
+                if(enemigo.id === "zombie"){
+                    score2 += 1;
+                } else if (enemigo.id === "satan"){
+                    score2 += 50;
+                } else if (enemigo.id === "cow") {
+                    score2 -= 100;
+                }
+            }
+        });
+    });
+    enemies.forEach(function(enemies){
+        if (collides(monito2, enemies)){
+            enemies.active = false;
+            vidas2 -= 1;
         }
     })
 }
 
 //check if win or lose
 function checkIfWin(){
-    if (vidas <= 0){
-        console.log('perdiste');
+    if (vidas1 <= 0){
+        clearInterval(Intervalo);
+        ctx.font =  "30px Arial";
+        ctx.fillStyle = 'blue';
+        ctx.fillText("El Orco 1 perdió todas sus vidas", 200, 100);
+        ctx.fillText("El Orco 2 gana :))))", 200, 200);
         //falta poner aqui una función para que detenga el juego
-    } if (seconds >= 90) {
-        console.log('tu score fue de ' + score);
-        //poner aqui función para detener el juego
+    } else if(vidas2 <= 0){
+        clearInterval(Intervalo);
+        ctx.font =  "30px Arial";
+        ctx.fillStyle = 'blue';
+        ctx.fillText("El Orco 2 perdió todas sus vidas", 200, 100);
+        ctx.fillText("El Orco 1 gana :))))", 200, 200);
+    } else {
+        if (seconds >= 90) {
+            clearInterval(Intervalo)
+            if (score1 > score2) {
+                console.log('jugador 1 gana')
+                ctx.font =  "30px Arial";
+                ctx.fillStyle = 'blue';
+                ctx.fillText("El Orco 1 gana :))) su puntaje fue: "+ score1, 200, 100);
+                ctx.fillText("El Orco 2 tuvo un puntaje de: " + score2, 200, 200);
+            } else if (score2 > score1) {
+                ctx.font =  "30px Arial";
+                ctx.fillStyle = 'blue';
+                ctx.fillText("El Orco 2 gana :))) su puntaje fue: "+ score2, 200, 100);
+                ctx.fillText("El Orco 1 tuvo un puntaje de: " + score1, 200, 200);
+            } else {
+                ctx.font =  "30px Arial";
+                ctx.fillStyle = 'blue';
+                ctx.fillText("LOL empataron, su puntaje fue de:"+ score2, 200, 100);
+            }
+           
+            //poner aqui función para detener el juego
+        }
     }
 }
+
 // set interval
-setInterval(function(){
+let Intervalo = setInterval(function(){
     //board
     myBoard.draw();
     //monito
     monito.draw();
+    monito2.draw();
     //balas
-    playerBullets.forEach(function(bullet){
+    playerBullets1.forEach(function(bullet){
         bullet.update();
     });
-    playerBullets = playerBullets.filter(function(bullet){
+    playerBullets1 = playerBullets1.filter(function(bullet){
         return bullet.active;
     });
-    playerBullets.forEach(function(bullet){
+    playerBullets1.forEach(function(bullet){
+        bullet.draw();
+    });
+    playerBullets2.forEach(function(bullet){
+        bullet.update();
+    });
+    playerBullets2 = playerBullets2.filter(function(bullet){
+        return bullet.active;
+    });
+    playerBullets2.forEach(function(bullet){
         bullet.draw();
     });
     //enemigos
@@ -319,18 +463,19 @@ onkeydown = onkeyup = function(e){
 
 
 //event listeners
-addEventListener('keydown', function(e){
-    if(e.keyCode === 39){
-        if (multipleKeys[38]){
-            if(multipleKeys[32]){
+document.addEventListener('keydown', function(e){
+    //monito
+    // mover monito 1 adelante
+    if(e.keyCode === 76){
+        if (multipleKeys[73]){
+            if(multipleKeys[78]){
                 monito.moveUp();
                 monito.moveForward();
-                montio.shoot();
+                monito.shoot();
             }
-            //monito.moveUpForward();
             monito.moveUp();
             monito.moveForward()
-        } else if (multipleKeys[40]){
+        } else if (multipleKeys[75]){
             monito.moveDown();
             monito.moveForward();
         } 
@@ -338,11 +483,13 @@ addEventListener('keydown', function(e){
             monito.moveForward();
         }
         return;
-    } else if (e.keyCode === 37){
-        if (multipleKeys[38]) {
+    } 
+    //mover monito 1 atras
+    else if (e.keyCode === 74){
+        if (multipleKeys[73]) {
             monito.moveBackward();
             monito.moveUp();
-        } else if (multipleKeys[40]){
+        } else if (multipleKeys[75]){
             monito.moveBackward();
             monito.moveDown();
         } 
@@ -350,39 +497,118 @@ addEventListener('keydown', function(e){
             monito.moveBackward();
         }
         return;
-    } else if (e.keyCode === 38){
-        if (multipleKeys[39]){
-            //monito.moveUpForward();
+    } 
+    //mover monito 1 arriba
+    else if (e.keyCode === 73){
+        if (multipleKeys[76]){
             monito.moveUp();
             monito.moveForward();
-        } else if (multipleKeys[37]){
+        } else if (multipleKeys[74]){
             monito.moveUp();
             monito.moveBackward();
         }
         else {
-            if (multipleKeys[32]){
+            if (multipleKeys[78]){
                 monito.moveUp();
-                montio.shoot();
-
+                monito.shoot();
             }
             monito.moveUp();
         }
         return;
-    } else if (e.keyCode === 40) {
-        if (multipleKeys[37]) {
+    } 
+    //mover monito 1 abajo
+    else if (e.keyCode === 75) {
+        if (multipleKeys[74]) {
             monito.moveDown();
             monito.moveBackward();
-        } else if (multipleKeys[39]){
+        } else if (multipleKeys[76]){
             monito.moveDown();
             monito.moveForward();
         } 
         else {
             monito.moveDown();
         }
-        
         return;
-    } else if (e.keyCode === 32) {
+    } 
+    //disparo monito 1
+    else if (e.keyCode === 78) {
         monito.shoot();
+    }
+
+   
+
+})
+
+document.addEventListener('keydown', function(e){
+     //monito2
+    // mover monito2 delante
+    if(e.keyCode === 70){
+        if (multipleKeys[69]){
+            if(multipleKeys[86]){
+                monito2.moveUp();
+                monito2.moveForward();
+                monito2.shoot();
+            }
+            monito2.moveUp();
+            monito2.moveForward()
+        } else if (multipleKeys[68]){
+            monito2.moveDown();
+            monito2.moveForward();
+        } 
+        else {
+            monito2.moveForward();
+        }
+        return;
+    } 
+    //mover monito2 atras
+    else if (e.keyCode === 83){
+        if (multipleKeys[69]) {
+            monito2.moveBackward();
+            monito2.moveUp();
+        } else if (multipleKeys[68]){
+            monito2.moveBackward();
+            monito2.moveDown();
+        } 
+        else {
+            monito2.moveBackward();
+        }
+        return;
+    } 
+    //mover monito2 arriba
+    else if (e.keyCode === 69){
+        if (multipleKeys[70]){
+            monito2.moveUp();
+            monito2.moveForward();
+        } else if (multipleKeys[83]){
+            monito2.moveUp();
+            monito2.moveBackward();
+        }
+        else {
+            if (multipleKeys[86]){
+                monito2.moveUp();
+                monito2.shoot();
+            }
+            monito2.moveUp();
+        }
+        return;
+    } 
+    //mover monito2 abajo
+    else if (e.keyCode === 68) {
+        if (multipleKeys[83]) {
+            monito2.moveDown();
+            monito2.moveBackward();
+        } else if (multipleKeys[70]){
+            monito2.moveDown();
+            monito2.moveForward();
+        } 
+        else {
+            monito2.moveDown();
+        }
+        return;
+    } 
+    //disparo monito 1
+    else if (e.keyCode === 86) {
+        monito2.shoot();
     }
 })
 
