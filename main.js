@@ -24,6 +24,8 @@ image4.src = 'img/orcp22.png';
 //set sound effect
 let groan = new Audio();
 groan.src = 'img/groan.mp3';
+let oof = new Audio();
+oof.src = 'img/roblox.mp3';
 
 
 //set images
@@ -136,7 +138,7 @@ let monito = {
 
     moveDown(){
         if (this.y >= myBoard.height - this.height -5){
-            this.y = myBoard.height-this.height -5;
+            this.y = myBoard.height- this.height -5;
         }
         this.y += 15;
     },
@@ -404,6 +406,8 @@ function handleCollisions() {
         enemies.forEach(function(enemigo){
             if (collides(bullet, enemigo)){
                 enemigo.exp();
+                oof.play();
+
                 bullet.active = false;
                 if(enemigo.id === "celery"){
                     score1 += 1;
@@ -434,13 +438,23 @@ function handleCollisions() {
         enemies.forEach(function(enemigo){
             if (collides(bullet, enemigo)){
                 enemigo.exp();
+                oof.play();
+
                 bullet.active = false;
-                if(enemigo.id === "zombie"){
+                if(enemigo.id === "celery"){
                     score2 += 1;
                 } else if (enemigo.id === "satan"){
                     score2 += 50;
+                } else if (enemigo.id === "dog") {
+                    score2 -= 20;
+                } else if (enemigo.id === "lettuce") {
+                    score2 += 5;
+                } else if (enemigo.id === "avocado") {
+                    score2 += 10;
+                } else if (enemigo.id === "pig") {
+                    score2 -= 5;
                 } else if (enemigo.id === "cow") {
-                    score2 -= 100;
+                    score2 -= 1;
                 }
             }
         });
@@ -474,7 +488,7 @@ function checkIfWin(){
         ctx.fillText('Press Backspace to play again', 200, 300);
         myBoard.music.pause();
     } else {
-        if (seconds >= 90) {
+        if (seconds >= 60) {
             clearInterval(Intervalo)
             if (score1 > score2) {
                 console.log('jugador 1 gana')
