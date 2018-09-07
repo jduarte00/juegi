@@ -5,6 +5,7 @@ let vidas1 = 3;
 let vidas2 = 3;
 let frames = 0;
 let seconds = 0;
+let Intervalo;
 //set canvas
 let canvas = document.getElementById('my-canvas');
 let ctx = canvas.getContext('2d');
@@ -16,6 +17,13 @@ let image1 = new Image();
 image1.src = "img/orc0.png";
 let image2 = new Image();
 image2.src = "img/orc1.png";
+let image3 = new Image();
+image3.src = 'img/orcp2.png';
+let image4 = new Image();
+image4.src = 'img/orcp22.png';
+//set sound effect
+let groan = new Audio();
+groan.src = 'img/groan.mp3';
 
 
 //set images
@@ -40,7 +48,7 @@ class Board{
         this.image.src = images.bg;
         this.image.height = 500;
         this.music = new Audio();
-        this.music.src = ""
+        this.music.src = "img/song.mp3"
         this.image.onload = function(){
             this.draw();
         }
@@ -58,16 +66,17 @@ class Board{
         ctx.drawImage(this.image, this.x, this.y);
         /* ctx.drawImage(this.image, this.width + this.x, this.y); */
         // display the number of points or fps
+        ctx.font = "15px UnifrakturCook"
         ctx.fillStyle = "lightgreen";
-        ctx.fillText('Score1: ' +score1, 10, 20);
+        ctx.fillText('Score Player 1: ' +score1, 10, 20);
         ctx.fillStyle = "lightgreen";
-        ctx.fillText('Score2: ' +score2, 10, 40);
+        ctx.fillText('Score Player 2: ' +score2, 690, 20);
         ctx.fillStyle = "white";
-        ctx.fillText('Seconds: ' +seconds, 10, 60);
-        ctx.fillStyle = "red";
-        ctx.fillText('Lives1: ' + vidas1, 10, 80);
-        ctx.fillStyle = "red";
-        ctx.fillText('Lives2: ' + vidas2, 10, 100);
+        ctx.fillText('Seconds: ' +seconds, 350, 20);
+        ctx.fillStyle = "yellow";
+        ctx.fillText('Lives Player 1: ' + vidas1, 10, 40);
+        ctx.fillStyle = "yellow";
+        ctx.fillText('Lives Player 2: ' + vidas2, 690, 40);
         frames++;
         seconds = parseInt(frames/60);
     }
@@ -75,13 +84,14 @@ class Board{
 
 let myBoard = new Board();
 
+
 // Draw monito
 let monito = {
     width: 43,
     height: 50,
     x: 30,
     y: 50,
-    selectedImage: image1,
+    selectedImage: image3,
     haciaAbajo: false,
     jump_y: this.y,
     updater: 0,
@@ -90,9 +100,9 @@ let monito = {
     draw(){
         this.updater ++;
         if (this.updater >= this.limitupdater){
-            if (this.selectedImage === image1) {
-                this.selectedImage = image2
-            } else {this.selectedImage = image1}
+            if (this.selectedImage === image3) {
+                this.selectedImage = image4
+            } else {this.selectedImage = image3}
             this.updater = 0;
         }
         //this.y =  myBoard.height - monito.height -10
@@ -103,14 +113,14 @@ let monito = {
         if (this.x >= myBoard.width - this.width) {
             this.x = myBoard.width -this.width
         } 
-        this.x += 5;
+        this.x += 10;
     },
 
     moveBackward(){
         if (this.x <= 0){
             this.x = 0;
         }
-        this.x -= 5;
+        this.x -= 10;
     },
     
     idle(){
@@ -121,14 +131,14 @@ let monito = {
         if (this.y <= 0){
             this.y = 0;
         }
-        this.y -= 5;
+        this.y -= 10;
     },
 
     moveDown(){
         if (this.y >= myBoard.height - this.height -5){
             this.y = myBoard.height-this.height -5;
         }
-        this.y += 5;
+        this.y += 10;
     },
 
     shoot(){
@@ -159,6 +169,8 @@ let monito2 = {
     jump_y: this.y,
     updater: 0,
     limitupdater: 10,
+    
+
    
     draw(){
         this.updater ++;
@@ -176,14 +188,14 @@ let monito2 = {
         if (this.x >= myBoard.width - this.width) {
             this.x = myBoard.width -this.width
         } 
-        this.x += 5;
+        this.x += 10;
     },
 
     moveBackward(){
         if (this.x <= 0){
             this.x = 0;
         }
-        this.x -= 5;
+        this.x -= 10;
     },
     
     idle(){
@@ -194,14 +206,14 @@ let monito2 = {
         if (this.y <= 0){
             this.y = 0;
         }
-        this.y -= 5;
+        this.y -= 10;
     },
 
     moveDown(){
         if (this.y >= myBoard.height - this.height -5){
             this.y = myBoard.height-this.height -5;
         }
-        this.y += 5;
+        this.y += 10;
     },
 
     shoot(){
@@ -232,6 +244,9 @@ function Bullet(I){
     I.height = 16;
     I.image = new Image();
     I.image.src = "img/apple.png"
+    I.image.onload = function () {
+        enemigo.draw();
+    }
 
 
     I.inBounds = function() {
@@ -265,9 +280,11 @@ class Enemigos{
         this.explosion.src = 'img/explosion.png';
         this.wave = true;
         this.counter = 0;
+        
     }
 
     draw(){
+        
         this.x -=2;
         if (this.counter % 100 === 0 && this.wave === true){
             this.y += this.width;
@@ -297,15 +314,43 @@ function generateEnemigos(){
     if (frames % 200 === 0) {
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
-        enemigo.image.src = 'img/zombie.png';
-        enemigo.width = 68;
-        enemigo.height = 34;
-        enemigo.id = "zombie";
+        enemigo.image.src = 'img/celery.png';
+        enemigo.image.onload = function () {
+            enemigo.draw();
+        }
+        enemigo.width = 50;
+        enemigo.height = 50;
+        enemigo.id = "celery";
         enemies.push(enemigo);
-    } else if (frames % 500 === 0) {
+    } else if (frames % 350 === 0){
+        let y = Math.floor(Math.random()*(canvas.height - 100));
+        let enemigo = new Enemigos(y);
+        enemigo.image.src = 'img/avocado.png';
+        enemigo.image.onload = function () {
+            enemigo.draw();
+        }
+        enemigo.width = 50;
+        enemigo.height = 50;
+        enemigo.id = "avocado";
+        enemies.push(enemigo);
+    } else if (frames % 550 === 0){
+        let y = Math.floor(Math.random()*(canvas.height - 100));
+        let enemigo = new Enemigos(y);
+        enemigo.image.src = 'img/lettuce.png';
+        enemigo.image.onload = function () {
+            enemigo.draw();
+        }
+        enemigo.width = 50;
+        enemigo.height = 50;
+        enemigo.id = "lettuce";
+        enemies.push(enemigo);
+    } else if (frames % 1000 === 0) {
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
         enemigo.image.src = 'img/satanas.png';
+        enemigo.image.onload = function () {
+            enemigo.draw();
+        }
         enemigo.width = 64;
         enemigo.height = 64;
         enemigo.id = "satan";
@@ -313,10 +358,35 @@ function generateEnemigos(){
     } else if (frames % 650 === 0){
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
-        enemigo.image.src = 'img/cow.png';
-        enemigo.width = 66;
-        enemigo.height = 38;
+        enemigo.image.src = 'img/vaca.png';
+        enemigo.image.onload = function () {
+            enemigo.draw();
+        }
+        enemigo.width = 50;
+        enemigo.height = 50;
         enemigo.id = "cow";
+        enemies.push(enemigo);   
+    } else if (frames % 220 === 0){
+        let y = Math.floor(Math.random()*(canvas.height - 100));
+        let enemigo = new Enemigos(y);
+        enemigo.image.src = 'img/pig.png';
+        enemigo.image.onload = function () {
+            enemigo.draw();
+        }
+        enemigo.width = 49;
+        enemigo.height = 46;
+        enemigo.id = "pig";
+        enemies.push(enemigo);   
+    } else if (frames % 330 === 0){
+        let y = Math.floor(Math.random()*(canvas.height - 100));
+        let enemigo = new Enemigos(y);
+        enemigo.image.src = 'img/dog.png';
+        enemigo.image.onload = function () {
+            enemigo.draw();
+        }
+        enemigo.width = 50;
+        enemigo.height = 50;
+        enemigo.id = "dog";
         enemies.push(enemigo);   
     }
 }
@@ -335,12 +405,20 @@ function handleCollisions() {
             if (collides(bullet, enemigo)){
                 enemigo.exp();
                 bullet.active = false;
-                if(enemigo.id === "zombie"){
+                if(enemigo.id === "celery"){
                     score1 += 1;
                 } else if (enemigo.id === "satan"){
                     score1 += 50;
+                } else if (enemigo.id === "dog") {
+                    score1 -= 20;
+                } else if (enemigo.id === "lettuce") {
+                    score1 += 5;
+                } else if (enemigo.id === "avocado") {
+                    score1 += 10;
+                } else if (enemigo.id === "pig") {
+                    score1 -= 5;
                 } else if (enemigo.id === "cow") {
-                    score1 -= 100;
+                    score1 -= 1;
                 }
             }
         });
@@ -348,6 +426,7 @@ function handleCollisions() {
     enemies.forEach(function(enemies){
         if (collides(monito, enemies)){
             enemies.active = false;
+            groan.play();
             vidas1 -= 1;
         }
     })
@@ -369,6 +448,7 @@ function handleCollisions() {
     enemies.forEach(function(enemies){
         if (collides(monito2, enemies)){
             enemies.active = false;
+            groan.play();
             vidas2 -= 1;
         }
     })
@@ -378,91 +458,123 @@ function handleCollisions() {
 function checkIfWin(){
     if (vidas1 <= 0){
         clearInterval(Intervalo);
-        ctx.font =  "30px Arial";
-        ctx.fillStyle = 'blue';
-        ctx.fillText("El Orco 1 perdió todas sus vidas", 200, 100);
-        ctx.fillText("El Orco 2 gana :))))", 200, 200);
+        ctx.font =  "30px UnifrakturCook";
+        ctx.fillStyle = 'white';
+        ctx.fillText("El Veganorc 1 perdió todas sus vidas", 200, 100);
+        ctx.fillText("El Veganorc 2 gana :))))", 230, 200);
+        ctx.fillText('Press Backspace to play again', 200, 300);
+        myBoard.music.pause();
         //falta poner aqui una función para que detenga el juego
     } else if(vidas2 <= 0){
         clearInterval(Intervalo);
-        ctx.font =  "30px Arial";
-        ctx.fillStyle = 'blue';
-        ctx.fillText("El Orco 2 perdió todas sus vidas", 200, 100);
-        ctx.fillText("El Orco 1 gana :))))", 200, 200);
+        ctx.font =  "30px UnifrakturCook";
+        ctx.fillStyle = 'white';
+        ctx.fillText("El Veganorc 2 perdió todas sus vidas", 200, 100);
+        ctx.fillText("El Veganorc 1 gana :))))", 230, 200);
+        ctx.fillText('Press Backspace to play again', 200, 300);
+        myBoard.music.pause();
     } else {
         if (seconds >= 90) {
             clearInterval(Intervalo)
             if (score1 > score2) {
                 console.log('jugador 1 gana')
-                ctx.font =  "30px Arial";
-                ctx.fillStyle = 'blue';
-                ctx.fillText("El Orco 1 gana :))) su puntaje fue: "+ score1, 200, 100);
-                ctx.fillText("El Orco 2 tuvo un puntaje de: " + score2, 200, 200);
+                ctx.font =  "30px UnifrakturCook";
+                ctx.fillStyle = 'white';
+                ctx.fillText("El Veganorc 1 gana :))) su puntaje fue: "+ score1, 200, 100);
+                ctx.fillText("El Veganorc 2 tuvo un puntaje de: " + score2, 230, 200);
+                ctx.fillText('Press Backspace to play again', 200, 300);
+                myBoard.music.pause();
             } else if (score2 > score1) {
-                ctx.font =  "30px Arial";
-                ctx.fillStyle = 'blue';
-                ctx.fillText("El Orco 2 gana :))) su puntaje fue: "+ score2, 200, 100);
-                ctx.fillText("El Orco 1 tuvo un puntaje de: " + score1, 200, 200);
+                ctx.font =  "30px UnifrakturCook";
+                ctx.fillStyle = 'white';
+                ctx.fillText("El Veganorc 2 gana :))) su puntaje fue: "+ score2, 200, 100);
+                ctx.fillText("El Veganorc 1 tuvo un puntaje de: " + score1, 230, 200);
+                ctx.fillText('Press Backspace to play again', 200, 300);
+                myBoard.music.pause();
             } else {
-                ctx.font =  "30px Arial";
-                ctx.fillStyle = 'blue';
+                ctx.font =  "30px UnifrakturCook";
+                ctx.fillStyle = 'white';
                 ctx.fillText("LOL empataron, su puntaje fue de:"+ score2, 200, 100);
+                ctx.fillText('Press Backspace to play again', 230, 300);
+                myBoard.music.pause();
             }
            
-            //poner aqui función para detener el juego
+           
         }
     }
+
+    
 }
 
 // set interval
-let Intervalo = setInterval(function(){
-    //board
-    myBoard.draw();
-    //monito
-    monito.draw();
-    monito2.draw();
-    //balas
-    playerBullets1.forEach(function(bullet){
-        bullet.update();
-    });
-    playerBullets1 = playerBullets1.filter(function(bullet){
-        return bullet.active;
-    });
-    playerBullets1.forEach(function(bullet){
-        bullet.draw();
-    });
-    playerBullets2.forEach(function(bullet){
-        bullet.update();
-    });
-    playerBullets2 = playerBullets2.filter(function(bullet){
-        return bullet.active;
-    });
-    playerBullets2.forEach(function(bullet){
-        bullet.draw();
-    });
-    //enemigos
-    generateEnemigos();
-    enemies = enemies.filter(function(enemigo){
-        return enemigo.inBound()
-    });
-    enemies.forEach(function(enemigo){
-        enemigo.draw();
-    });
-    handleCollisions();
-    //checar si perdiste o ganaste
-    checkIfWin();
+function startGame(){
+    myBoard.music.play();
+    score1 = 0;
+    score2 = 0;
+    vidas1 = 3;
+    vidas2 = 3;
+    frames = 0;
+    seconds = 0;
+    playerBullets1 = [];
+    playerBullets2 = [];
+    enemies = [];
+    Intervalo = setInterval(function(){
+        //board
+        myBoard.draw();
+        //monito
+        monito.draw();
+        monito2.draw();
+        //balas
+        playerBullets1.forEach(function(bullet){
+            bullet.update();
+        });
+        playerBullets1 = playerBullets1.filter(function(bullet){
+            return bullet.active;
+        });
+        playerBullets1.forEach(function(bullet){
+            bullet.draw();
+        });
+        playerBullets2.forEach(function(bullet){
+            bullet.update();
+        });
+        playerBullets2 = playerBullets2.filter(function(bullet){
+            return bullet.active;
+        });
+        playerBullets2.forEach(function(bullet){
+            bullet.draw();
+        });
+        //enemigos
+        generateEnemigos();
+        enemies = enemies.filter(function(enemigo){
+            return enemigo.inBound()
+        });
+        enemies.forEach(function(enemigo){
+            enemigo.draw();
+        });
+        handleCollisions();
+        //checar si perdiste o ganaste
+        checkIfWin();
+        
     
+    }, 1000/60)
+}
 
-}, 1000/60)
 
 // determine two or more keys
-let multipleKeys = {}; //tampoco funciona
+let multipleKeys = {}; 
 onkeydown = onkeyup = function(e){
     multipleKeys[e.keyCode] = e.type == 'keydown';
 }
 
 
-//event listeners
+
+//event listeners 
+document.addEventListener('keydown', function(e){
+    if (e.keyCode === 8){
+        startGame();
+    }
+})
+
 document.addEventListener('keydown', function(e){
     //monito
     // mover monito 1 adelante
@@ -533,7 +645,7 @@ document.addEventListener('keydown', function(e){
     //disparo monito 1
     else if (e.keyCode === 78) {
         monito.shoot();
-    }
+    } 
 
    
 
@@ -606,9 +718,17 @@ document.addEventListener('keydown', function(e){
         }
         return;
     } 
-    //disparo monito 1
+    //disparo monito 2
     else if (e.keyCode === 86) {
         monito2.shoot();
     }
 })
 
+// load welcome screen before the game start
+window.addEventListener("load", function (){
+    let hello = new Image();
+    hello.src = "img/welcomescreen.png"
+    ctx.drawImage(hello, 250, 100);
+    ctx.font = "50px UnifrakturCook";
+    ctx.fillText("Press BACKSPACE to start", 100, 300);
+})
