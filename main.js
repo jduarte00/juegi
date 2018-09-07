@@ -113,14 +113,14 @@ let monito = {
         if (this.x >= myBoard.width - this.width) {
             this.x = myBoard.width -this.width
         } 
-        this.x += 10;
+        this.x += 15;
     },
 
     moveBackward(){
         if (this.x <= 0){
             this.x = 0;
         }
-        this.x -= 10;
+        this.x -= 15;
     },
     
     idle(){
@@ -131,14 +131,14 @@ let monito = {
         if (this.y <= 0){
             this.y = 0;
         }
-        this.y -= 10;
+        this.y -= 15;
     },
 
     moveDown(){
         if (this.y >= myBoard.height - this.height -5){
             this.y = myBoard.height-this.height -5;
         }
-        this.y += 10;
+        this.y += 15;
     },
 
     shoot(){
@@ -188,14 +188,14 @@ let monito2 = {
         if (this.x >= myBoard.width - this.width) {
             this.x = myBoard.width -this.width
         } 
-        this.x += 10;
+        this.x += 15;
     },
 
     moveBackward(){
         if (this.x <= 0){
             this.x = 0;
         }
-        this.x -= 10;
+        this.x -= 15;
     },
     
     idle(){
@@ -206,14 +206,14 @@ let monito2 = {
         if (this.y <= 0){
             this.y = 0;
         }
-        this.y -= 10;
+        this.y -= 15;
     },
 
     moveDown(){
         if (this.y >= myBoard.height - this.height -5){
             this.y = myBoard.height-this.height -5;
         }
-        this.y += 10;
+        this.y += 15;
     },
 
     shoot(){
@@ -311,7 +311,7 @@ class Enemigos{
 }
 
 function generateEnemigos(){
-    if (frames % 200 === 0) {
+    if (seconds % 10 === 0) {
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
         enemigo.image.src = 'img/celery.png';
@@ -322,7 +322,7 @@ function generateEnemigos(){
         enemigo.height = 50;
         enemigo.id = "celery";
         enemies.push(enemigo);
-    } else if (frames % 350 === 0){
+    } else if (seconds % 20 === 0){
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
         enemigo.image.src = 'img/avocado.png';
@@ -333,7 +333,7 @@ function generateEnemigos(){
         enemigo.height = 50;
         enemigo.id = "avocado";
         enemies.push(enemigo);
-    } else if (frames % 550 === 0){
+    } else if (seconds % 30 === 0){
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
         enemigo.image.src = 'img/lettuce.png';
@@ -344,7 +344,7 @@ function generateEnemigos(){
         enemigo.height = 50;
         enemigo.id = "lettuce";
         enemies.push(enemigo);
-    } else if (frames % 1000 === 0) {
+    } else if (seconds % 45 === 0) {
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
         enemigo.image.src = 'img/satanas.png';
@@ -355,7 +355,7 @@ function generateEnemigos(){
         enemigo.height = 64;
         enemigo.id = "satan";
         enemies.push(enemigo);
-    } else if (frames % 650 === 0){
+    } else if (seconds % 10 === 0){
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
         enemigo.image.src = 'img/vaca.png';
@@ -366,7 +366,7 @@ function generateEnemigos(){
         enemigo.height = 50;
         enemigo.id = "cow";
         enemies.push(enemigo);   
-    } else if (frames % 220 === 0){
+    } else if (seconds % 20 === 0){
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
         enemigo.image.src = 'img/pig.png';
@@ -377,7 +377,7 @@ function generateEnemigos(){
         enemigo.height = 46;
         enemigo.id = "pig";
         enemies.push(enemigo);   
-    } else if (frames % 330 === 0){
+    } else if (seconds % 30 === 0){
         let y = Math.floor(Math.random()*(canvas.height - 100));
         let enemigo = new Enemigos(y);
         enemigo.image.src = 'img/dog.png';
